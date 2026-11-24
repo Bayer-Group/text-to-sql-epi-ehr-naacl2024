@@ -1,0 +1,34 @@
+# Dependabot: security updates only.
+#
+# This repository holds research/paper code with no CI, so routine version
+# bumps are disabled (open-pull-requests-limit: 0) to keep the published
+# environment reproducible. That limit does not apply to security updates:
+# Dependabot still opens a PR for every alert with a patched release, and
+# .github/workflows/dependabot-auto-merge.yml merges it immediately.
+#
+# Requires "Dependabot security updates" to be enabled in
+# Settings -> Advanced Security. The group name "security" is load-bearing:
+# the auto-merge workflow keys on it.
+
+version: 2
+
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+    groups:
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+    groups:
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
