@@ -1,0 +1,36 @@
+# Auto-merge Dependabot security updates.
+#
+# An open security alert is a bigger risk to this repository than a dependency
+# bump that turns out to be incompatible -- the latter is a normal bug someone
+# can fix, the former can get the repo shut down. So security updates
+# (Dependabot group "security", see .github/dependabot.yml) are merged as soon
+# as Dependabot opens them. Nothing else is merged automatically.
+
+name: Dependabot auto-merge
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  security:
+    name: merge security update
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge
+        if: steps.meta.outputs.dependency-group == 'security'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge "$PR_URL" --squash --delete-branch
